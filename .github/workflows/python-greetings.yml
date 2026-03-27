@@ -10,6 +10,13 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
+      - name: Show runner identity
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
       - name: Install pip dependencies
         uses: ./.github/actions/install-pip-deps
 
@@ -20,11 +27,26 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
+      - name: Show runner identity in deploy-to-dev
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
       - name: Deploy to dev
         uses: ./.github/actions/deploy
         with:
           environment: dev
           port: "7001"
+
+      - name: Check PM2 after deploy-to-dev
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify dev endpoint after deploy
+        shell: cmd
+        run: curl http://127.0.0.1:7001/greetings
 
   tests-on-dev:
     runs-on: self-hosted
@@ -32,6 +54,21 @@ jobs:
     steps:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
+
+      - name: Show runner identity in tests-on-dev
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
+      - name: Check PM2 in tests-on-dev
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify dev endpoint before tests
+        shell: cmd
+        run: curl http://127.0.0.1:7001/greetings
 
       - name: Run tests on dev
         uses: ./.github/actions/test
@@ -45,11 +82,26 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
+      - name: Show runner identity in deploy-to-stg
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
       - name: Deploy to stg
         uses: ./.github/actions/deploy
         with:
           environment: stg
           port: "7002"
+
+      - name: Check PM2 after deploy-to-stg
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify stg endpoint after deploy
+        shell: cmd
+        run: curl http://127.0.0.1:7002/greetings
 
   tests-on-stg:
     runs-on: self-hosted
@@ -58,7 +110,18 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Verify endpoint before tests
+      - name: Show runner identity in tests-on-stg
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
+      - name: Check PM2 in tests-on-stg
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify stg endpoint before tests
         shell: cmd
         run: curl http://127.0.0.1:7002/greetings
 
@@ -74,11 +137,26 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
+      - name: Show runner identity in deploy-to-preprod
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
       - name: Deploy to preprod
         uses: ./.github/actions/deploy
         with:
           environment: preprod
           port: "7003"
+
+      - name: Check PM2 after deploy-to-preprod
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify preprod endpoint after deploy
+        shell: cmd
+        run: curl http://127.0.0.1:7003/greetings
 
   tests-on-preprod:
     runs-on: self-hosted
@@ -86,6 +164,21 @@ jobs:
     steps:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
+
+      - name: Show runner identity in tests-on-preprod
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
+      - name: Check PM2 in tests-on-preprod
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify preprod endpoint before tests
+        shell: cmd
+        run: curl http://127.0.0.1:7003/greetings
 
       - name: Run tests on preprod
         uses: ./.github/actions/test
@@ -99,11 +192,26 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
+      - name: Show runner identity in deploy-to-prod
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
       - name: Deploy to prod
         uses: ./.github/actions/deploy
         with:
           environment: prod
           port: "7004"
+
+      - name: Check PM2 after deploy-to-prod
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify prod endpoint after deploy
+        shell: cmd
+        run: curl http://127.0.0.1:7004/greetings
 
   tests-on-prod:
     runs-on: self-hosted
@@ -111,6 +219,21 @@ jobs:
     steps:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
+
+      - name: Show runner identity in tests-on-prod
+        shell: cmd
+        run: |
+          echo COMPUTERNAME=%COMPUTERNAME%
+          hostname
+          whoami
+
+      - name: Check PM2 in tests-on-prod
+        shell: cmd
+        run: pm2 list
+
+      - name: Verify prod endpoint before tests
+        shell: cmd
+        run: curl http://127.0.0.1:7004/greetings
 
       - name: Run tests on prod
         uses: ./.github/actions/test
