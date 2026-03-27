@@ -5,10 +5,10 @@ runs:
   using: "composite"
   steps:
     - name: Checkout pipeline repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v4
 
     - name: Clone python-greetings repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v4
       with:
         repository: mtararujs/python-greetings
         path: python-greetings
