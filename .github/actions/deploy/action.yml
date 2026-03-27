@@ -58,3 +58,7 @@ runs:
     - name: Verify endpoint locally
       shell: cmd
       run: curl http://127.0.0.1:${{ inputs.port }}/greetings
+
+    - name: Check listening port
+      shell: cmd
+      run: netstat -ano | findstr :${{ inputs.port }}
