@@ -40,7 +40,9 @@ runs:
     - name: Start application with PM2
       shell: cmd
       working-directory: python-greetings
-      run: pm2 start app.py --name greetings-app-${{ inputs.environment }} --interpreter venv\Scripts\python.exe -- --port ${{ inputs.port }}
+      run: |
+        set PYTHON_PATH=%cd%\venv\Scripts\python.exe
+        pm2 start app.py --name greetings-app-${{ inputs.environment }} --interpreter "%PYTHON_PATH%" -- --port ${{ inputs.port }}
 
     - name: Show PM2 status
       shell: cmd
