@@ -4,22 +4,25 @@ description: Clone python-greetings repo and install Python dependencies
 runs:
   using: composite
   steps:
+    - name: Checkout pipeline repository
+      uses: actions/checkout@v4
+
     - name: Print stage info
       shell: cmd
       run: echo Installing all required dependencies...
 
-    - name: Clone python-greetings repository
-      uses: actions/checkout@v4
-      with:
-        repository: mtararujs/python-greetings
-        path: python-greetings
+    - name: Prepare temporary source folder
+      shell: cmd
+      run: |
+        if exist C:\deployments\python-greetings-install rmdir /s /q C:\deployments\python-greetings-install
+        git clone https://github.com/mtararujs/python-greetings.git C:\deployments\python-greetings-install
 
     - name: Create virtual environment
       shell: cmd
-      working-directory: python-greetings
+      working-directory: C:\deployments\python-greetings-install
       run: python -m venv venv
 
     - name: Install Python dependencies
       shell: cmd
-      working-directory: python-greetings
+      working-directory: C:\deployments\python-greetings-install
       run: venv\Scripts\python.exe -m pip install -r requirements.txt

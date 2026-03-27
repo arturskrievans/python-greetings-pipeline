@@ -3,8 +3,10 @@ description: Deploy python-greetings to a target environment with PM2
 
 inputs:
   environment:
+    description: Environment name (dev, stg, preprod, prod)
     required: true
   port:
+    description: Port number
     required: true
 
 runs:
@@ -17,7 +19,11 @@ runs:
       shell: cmd
       run: echo Deploying to ${{ inputs.environment }} environment on port ${{ inputs.port }}...
 
-    - name: Delete old PM2 process if it exists
+    - name: Disable runner process tracking for PM2
+      shell: cmd
+      run: echo RUNNER_TRACKING_ID=>> %GITHUB_ENV%
+
+    - name: Stop old PM2 process if it exists
       shell: cmd
       continue-on-error: true
       run: pm2 delete greetings-app-${{ inputs.environment }}
@@ -40,7 +46,6 @@ runs:
 
     - name: Start application with PM2
       shell: cmd
-      working-directory: C:\deployments\python-greetings-${{ inputs.environment }}
       run: pm2 start "C:\deployments\python-greetings-${{ inputs.environment }}\venv\Scripts\python.exe" --name greetings-app-${{ inputs.environment }} -- "C:\deployments\python-greetings-${{ inputs.environment }}\app.py" --port ${{ inputs.port }}
 
     - name: Wait for app to start
@@ -51,14 +56,6 @@ runs:
       shell: cmd
       run: pm2 list
 
-    - name: Show PM2 logs
-      shell: cmd
-      run: pm2 logs greetings-app-${{ inputs.environment }} --lines 40 --nostream
-
     - name: Verify endpoint locally
       shell: cmd
       run: curl http://127.0.0.1:${{ inputs.port }}/greetings
-
-    - name: Check listening port
-      shell: cmd
-      run: netstat -ano | findstr :${{ inputs.port }}
