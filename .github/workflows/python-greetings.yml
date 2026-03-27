@@ -27,6 +27,10 @@ jobs:
     runs-on: self-hosted
     needs: install-pip-deps
     steps:
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        run: pm2 delete greetings-app-dev & set "errorlevel=0"
+
       - name: Prepare dev deployment folder
         shell: cmd
         run: |
@@ -42,10 +46,6 @@ jobs:
         shell: cmd
         working-directory: C:\deployments\python-greetings-dev
         run: venv\Scripts\python.exe -m pip install -r requirements.txt
-
-      - name: Stop old PM2 process if it exists
-        shell: cmd
-        run: pm2 delete greetings-app-dev & set "errorlevel=0"
 
       - name: Start application with PM2
         shell: cmd
@@ -80,6 +80,10 @@ jobs:
     runs-on: self-hosted
     needs: tests-on-dev
     steps:
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        run: pm2 delete greetings-app-stg & set "errorlevel=0"
+
       - name: Prepare stg deployment folder
         shell: cmd
         run: |
@@ -95,10 +99,6 @@ jobs:
         shell: cmd
         working-directory: C:\deployments\python-greetings-stg
         run: venv\Scripts\python.exe -m pip install -r requirements.txt
-
-      - name: Stop old PM2 process if it exists
-        shell: cmd
-        run: pm2 delete greetings-app-stg & set "errorlevel=0"
 
       - name: Start application with PM2
         shell: cmd
@@ -133,6 +133,10 @@ jobs:
     runs-on: self-hosted
     needs: tests-on-stg
     steps:
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        run: pm2 delete greetings-app-preprod & set "errorlevel=0"
+
       - name: Prepare preprod deployment folder
         shell: cmd
         run: |
@@ -148,10 +152,6 @@ jobs:
         shell: cmd
         working-directory: C:\deployments\python-greetings-preprod
         run: venv\Scripts\python.exe -m pip install -r requirements.txt
-
-      - name: Stop old PM2 process if it exists
-        shell: cmd
-        run: pm2 delete greetings-app-preprod & set "errorlevel=0"
 
       - name: Start application with PM2
         shell: cmd
@@ -186,6 +186,10 @@ jobs:
     runs-on: self-hosted
     needs: tests-on-preprod
     steps:
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        run: pm2 delete greetings-app-prod & set "errorlevel=0"
+
       - name: Prepare prod deployment folder
         shell: cmd
         run: |
@@ -201,10 +205,6 @@ jobs:
         shell: cmd
         working-directory: C:\deployments\python-greetings-prod
         run: venv\Scripts\python.exe -m pip install -r requirements.txt
-
-      - name: Stop old PM2 process if it exists
-        shell: cmd
-        run: pm2 delete greetings-app-prod & set "errorlevel=0"
 
       - name: Start application with PM2
         shell: cmd
