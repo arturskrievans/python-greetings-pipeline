@@ -52,6 +52,10 @@ jobs:
         working-directory: C:\deployments\python-greetings-dev
         run: pm2 start app.py --name greetings-app-dev --interpreter "C:\deployments\python-greetings-dev\venv\Scripts\python.exe" -- --port 7001
 
+      - name: Wait for app to start
+        shell: cmd
+        run: timeout /t 5
+
       - name: Show PM2 list
         shell: cmd
         run: pm2 list
@@ -104,6 +108,10 @@ jobs:
         shell: cmd
         working-directory: C:\deployments\python-greetings-stg
         run: pm2 start app.py --name greetings-app-stg --interpreter "C:\deployments\python-greetings-stg\venv\Scripts\python.exe" -- --port 7002
+
+      - name: Wait for app to start
+        shell: cmd
+        run: timeout /t 5
 
       - name: Show PM2 list
         shell: cmd
@@ -158,6 +166,10 @@ jobs:
         working-directory: C:\deployments\python-greetings-preprod
         run: pm2 start app.py --name greetings-app-preprod --interpreter "C:\deployments\python-greetings-preprod\venv\Scripts\python.exe" -- --port 7003
 
+      - name: Wait for app to start
+        shell: cmd
+        run: timeout /t 5
+
       - name: Show PM2 list
         shell: cmd
         run: pm2 list
@@ -210,6 +222,10 @@ jobs:
         shell: cmd
         working-directory: C:\deployments\python-greetings-prod
         run: pm2 start app.py --name greetings-app-prod --interpreter "C:\deployments\python-greetings-prod\venv\Scripts\python.exe" -- --port 7004
+
+      - name: Wait for app to start
+        shell: cmd
+        run: timeout /t 5
 
       - name: Show PM2 list
         shell: cmd
