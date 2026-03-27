@@ -58,6 +58,10 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
+      - name: Verify endpoint before tests
+        shell: cmd
+        run: curl http://127.0.0.1:7002/greetings
+
       - name: Run tests on stg
         uses: ./.github/actions/test
         with:
