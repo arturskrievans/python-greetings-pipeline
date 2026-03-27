@@ -10,20 +10,17 @@ inputs:
     required: true
 
 runs:
-  using: "composite"
+  using: composite
   steps:
-    - name: Checkout pipeline repository
-      uses: actions/checkout@v6
-
-    - name: Clone python-greetings repository
-      uses: actions/checkout@v6
-      with:
-        repository: mtararujs/python-greetings
-        path: python-greetings
-
     - name: Print stage info
       shell: cmd
       run: echo Deploying to ${{ inputs.environment }} environment on port ${{ inputs.port }}...
+
+    - name: Clone python-greetings repository
+      uses: actions/checkout@v4
+      with:
+        repository: mtararujs/python-greetings
+        path: python-greetings
 
     - name: Create virtual environment
       shell: cmd
@@ -35,16 +32,23 @@ runs:
       working-directory: python-greetings
       run: venv\Scripts\python.exe -m pip install -r requirements.txt
 
-    - name: Stop old PM2 process if it exists
+    - name: Stop old PM2 process if exists
       shell: cmd
-      working-directory: python-greetings
-      run: pm2 delete greetings-app-${{ inputs.environment }} & set "errorlevel=0"
+      run: pm2 delete greetings-app-${{ inputs.environment }} || echo Process not found
 
     - name: Start application with PM2
       shell: cmd
       working-directory: python-greetings
       run: pm2 start app.py --name greetings-app-${{ inputs.environment }} --interpreter venv\Scripts\python.exe -- --port ${{ inputs.port }}
 
-    - name: Show PM2 process list
+    - name: Show PM2 status
       shell: cmd
       run: pm2 list
+
+    - name: Wait for application to start
+      shell: cmd
+      run: ping 127.0.0.1 -n 10 > nul
+
+    - name: Show recent logs (for debugging)
+      shell: cmd
+      run: pm2 logs greetings-app-${{ inputs.environment }} --lines 20 --nostream

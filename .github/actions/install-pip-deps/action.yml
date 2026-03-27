@@ -2,20 +2,17 @@ name: install-pip-deps
 description: Clone python-greetings repo and install Python dependencies
 
 runs:
-  using: "composite"
+  using: composite
   steps:
-    - name: Checkout pipeline repository
-      uses: actions/checkout@v6
+    - name: Print stage info
+      shell: cmd
+      run: echo Installing all required dependencies...
 
     - name: Clone python-greetings repository
       uses: actions/checkout@v6
       with:
         repository: mtararujs/python-greetings
         path: python-greetings
-
-    - name: Print stage info
-      shell: cmd
-      run: echo Installing all required dependencies...
 
     - name: Create virtual environment
       shell: cmd
