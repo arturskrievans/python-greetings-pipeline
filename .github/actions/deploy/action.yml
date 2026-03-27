@@ -3,7 +3,7 @@ description: Deploy python-greetings to a target environment with PM2
 
 inputs:
   environment:
-    description: Environment name (dev, stg, preprod, prod)
+    description: Environment name
     required: true
   port:
     description: Port number
@@ -32,9 +32,12 @@ runs:
       working-directory: python-greetings
       run: venv\Scripts\python.exe -m pip install -r requirements.txt
 
-    - name: Stop old PM2 process if exists
+    - name: Delete old PM2 process if it exists
       shell: cmd
-      run: pm2 delete greetings-app-${{ inputs.environment }} || echo Process not found
+      run: |
+        pm2 delete greetings-app-${{ inputs.environment }}
+        if errorlevel 1 echo Process not found, continuing...
+        exit /b 0
 
     - name: Start application with PM2
       shell: cmd
@@ -49,6 +52,6 @@ runs:
       shell: cmd
       run: ping 127.0.0.1 -n 10 > nul
 
-    - name: Show recent logs (for debugging)
+    - name: Show recent PM2 logs
       shell: cmd
       run: pm2 logs greetings-app-${{ inputs.environment }} --lines 20 --nostream
