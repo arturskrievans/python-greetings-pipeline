@@ -3,6 +3,7 @@ description: Run API tests for a target environment
 
 inputs:
   environment:
+    description: Environment name (dev, stg, preprod, prod)
     required: true
 
 runs:
@@ -25,6 +26,18 @@ runs:
       shell: cmd
       working-directory: C:\deployments\course-js-api-framework
       run: npm install
+
+    - name: Verify endpoint before tests
+      shell: powershell
+      run: |
+        switch ("${{ inputs.environment }}") {
+          "dev"     { $port = 7001 }
+          "stg"     { $port = 7002 }
+          "preprod" { $port = 7003 }
+          "prod"    { $port = 7004 }
+          default   { throw "Unknown environment: ${{ inputs.environment }}" }
+        }
+        curl.exe "http://127.0.0.1:$port/greetings"
 
     - name: Run greetings tests
       shell: cmd
