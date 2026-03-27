@@ -1,0 +1,50 @@
+name: deploy
+description: Deploy python-greetings to a target environment with PM2
+
+inputs:
+  environment:
+    description: Environment name (dev, stg, preprod, prod)
+    required: true
+  port:
+    description: Port number
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout pipeline repository
+      uses: actions/checkout@v6
+
+    - name: Clone python-greetings repository
+      uses: actions/checkout@v6
+      with:
+        repository: mtararujs/python-greetings
+        path: python-greetings
+
+    - name: Print stage info
+      shell: cmd
+      run: echo Deploying to ${{ inputs.environment }} environment on port ${{ inputs.port }}...
+
+    - name: Create virtual environment
+      shell: cmd
+      working-directory: python-greetings
+      run: python -m venv venv
+
+    - name: Install Python dependencies
+      shell: cmd
+      working-directory: python-greetings
+      run: venv\Scripts\python.exe -m pip install -r requirements.txt
+
+    - name: Stop old PM2 process if it exists
+      shell: cmd
+      working-directory: python-greetings
+      run: pm2 delete greetings-app-${{ inputs.environment }} & set "errorlevel=0"
+
+    - name: Start application with PM2
+      shell: cmd
+      working-directory: python-greetings
+      run: pm2 start app.py --name greetings-app-${{ inputs.environment }} --interpreter venv\Scripts\python.exe -- --port ${{ inputs.port }}
+
+    - name: Show PM2 process list
+      shell: cmd
+      run: pm2 list

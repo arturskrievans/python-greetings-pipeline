@@ -1,0 +1,87 @@
+name: Python Greetings Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  install-pip-deps:
+    runs-on: self-hosted
+    steps:
+      - name: Install pip dependencies
+        uses: ./.github/actions/install-pip-deps
+
+  deploy-to-dev:
+    runs-on: self-hosted
+    needs: install-pip-deps
+    steps:
+      - name: Deploy to dev
+        uses: ./.github/actions/deploy
+        with:
+          environment: dev
+          port: 7001
+
+  tests-on-dev:
+    runs-on: self-hosted
+    needs: deploy-to-dev
+    steps:
+      - name: Run tests on dev
+        uses: ./.github/actions/test
+        with:
+          environment: dev
+
+  deploy-to-stg:
+    runs-on: self-hosted
+    needs: tests-on-dev
+    steps:
+      - name: Deploy to stg
+        uses: ./.github/actions/deploy
+        with:
+          environment: stg
+          port: 7002
+
+  tests-on-stg:
+    runs-on: self-hosted
+    needs: deploy-to-stg
+    steps:
+      - name: Run tests on stg
+        uses: ./.github/actions/test
+        with:
+          environment: stg
+
+  deploy-to-preprod:
+    runs-on: self-hosted
+    needs: tests-on-stg
+    steps:
+      - name: Deploy to preprod
+        uses: ./.github/actions/deploy
+        with:
+          environment: preprod
+          port: 7003
+
+  tests-on-preprod:
+    runs-on: self-hosted
+    needs: deploy-to-preprod
+    steps:
+      - name: Run tests on preprod
+        uses: ./.github/actions/test
+        with:
+          environment: preprod
+
+  deploy-to-prod:
+    runs-on: self-hosted
+    needs: tests-on-preprod
+    steps:
+      - name: Deploy to prod
+        uses: ./.github/actions/deploy
+        with:
+          environment: prod
+          port: 7004
+
+  tests-on-prod:
+    runs-on: self-hosted
+    needs: deploy-to-prod
+    steps:
+      - name: Run tests on prod
+        uses: ./.github/actions/test
+        with:
+          environment: prod

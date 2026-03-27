@@ -1,0 +1,33 @@
+name: test
+description: Run API tests for a target environment
+
+inputs:
+  environment:
+    description: Environment name (dev, stg, preprod, prod)
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout pipeline repository
+      uses: actions/checkout@v6
+
+    - name: Clone API test repository
+      uses: actions/checkout@v6
+      with:
+        repository: mtararujs/course-js-api-framework
+        path: course-js-api-framework
+
+    - name: Print stage info
+      shell: cmd
+      run: echo Running tests on ${{ inputs.environment }} environment...
+
+    - name: Install Node dependencies
+      shell: cmd
+      working-directory: course-js-api-framework
+      run: npm install
+
+    - name: Run greetings tests
+      shell: cmd
+      working-directory: course-js-api-framework
+      run: npm run greetings greetings_${{ inputs.environment }}
