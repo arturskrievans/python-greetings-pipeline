@@ -3,57 +3,58 @@ description: Deploy python-greetings to a target environment with PM2
 
 inputs:
   environment:
-    description: Environment name
     required: true
   port:
-    description: Port number
     required: true
 
 runs:
   using: composite
   steps:
+    - name: Checkout pipeline repository
+      uses: actions/checkout@v4
+
     - name: Print stage info
       shell: cmd
       run: echo Deploying to ${{ inputs.environment }} environment on port ${{ inputs.port }}...
-
-    - name: Clone python-greetings repository
-      uses: actions/checkout@v4
-      with:
-        repository: mtararujs/python-greetings
-        path: python-greetings
-
-    - name: Create virtual environment
-      shell: cmd
-      working-directory: python-greetings
-      run: python -m venv venv
-
-    - name: Install Python dependencies
-      shell: cmd
-      working-directory: python-greetings
-      run: venv\Scripts\python.exe -m pip install -r requirements.txt
 
     - name: Delete old PM2 process if it exists
       shell: cmd
       continue-on-error: true
       run: pm2 delete greetings-app-${{ inputs.environment }}
 
+    - name: Prepare deployment folder
+      shell: cmd
+      run: |
+        if exist C:\deployments\python-greetings-${{ inputs.environment }} rmdir /s /q C:\deployments\python-greetings-${{ inputs.environment }}
+        git clone https://github.com/mtararujs/python-greetings.git C:\deployments\python-greetings-${{ inputs.environment }}
+
+    - name: Create virtual environment
+      shell: cmd
+      working-directory: C:\deployments\python-greetings-${{ inputs.environment }}
+      run: python -m venv venv
+
+    - name: Install Python dependencies
+      shell: cmd
+      working-directory: C:\deployments\python-greetings-${{ inputs.environment }}
+      run: venv\Scripts\python.exe -m pip install -r requirements.txt
+
     - name: Start application with PM2
       shell: cmd
-      working-directory: python-greetings
-      run: pm2 start "%cd%\venv\Scripts\python.exe" --name greetings-app-${{ inputs.environment }} -- "%cd%\app.py" --port ${{ inputs.port }}
+      working-directory: C:\deployments\python-greetings-${{ inputs.environment }}
+      run: pm2 start "C:\deployments\python-greetings-${{ inputs.environment }}\venv\Scripts\python.exe" --name greetings-app-${{ inputs.environment }} -- "C:\deployments\python-greetings-${{ inputs.environment }}\app.py" --port ${{ inputs.port }}
 
-    - name: Show PM2 status
-      shell: cmd
-      run: pm2 list
-
-    - name: Wait for application to start
+    - name: Wait for app to start
       shell: cmd
       run: ping 127.0.0.1 -n 10 > nul
 
-    - name: Test endpoint
+    - name: Show PM2 list
+      shell: cmd
+      run: pm2 list
+
+    - name: Show PM2 logs
+      shell: cmd
+      run: pm2 logs greetings-app-${{ inputs.environment }} --lines 40 --nostream
+
+    - name: Verify endpoint locally
       shell: cmd
       run: curl http://127.0.0.1:${{ inputs.port }}/greetings
-
-    - name: Show recent PM2 logs
-      shell: cmd
-      run: pm2 logs greetings-app-${{ inputs.environment }} --lines 20 --nostream

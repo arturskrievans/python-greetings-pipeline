@@ -3,28 +3,30 @@ description: Run API tests for a target environment
 
 inputs:
   environment:
-    description: Environment name (dev, stg, preprod, prod)
     required: true
 
 runs:
   using: composite
   steps:
+    - name: Checkout pipeline repository
+      uses: actions/checkout@v4
+
     - name: Print stage info
       shell: cmd
       run: echo Running tests on ${{ inputs.environment }} environment...
 
-    - name: Clone API test repository
-      uses: actions/checkout@v4
-      with:
-        repository: mtararujs/course-js-api-framework
-        path: course-js-api-framework
+    - name: Prepare API test repository
+      shell: cmd
+      run: |
+        if exist C:\deployments\course-js-api-framework rmdir /s /q C:\deployments\course-js-api-framework
+        git clone https://github.com/mtararujs/course-js-api-framework.git C:\deployments\course-js-api-framework
 
     - name: Install Node dependencies
       shell: cmd
-      working-directory: course-js-api-framework
+      working-directory: C:\deployments\course-js-api-framework
       run: npm install
 
     - name: Run greetings tests
       shell: cmd
-      working-directory: course-js-api-framework
+      working-directory: C:\deployments\course-js-api-framework
       run: npm run greetings greetings_${{ inputs.environment }}
