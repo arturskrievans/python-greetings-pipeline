@@ -57,7 +57,7 @@ jobs:
       - name: Start application with PM2
         shell: cmd
         working-directory: python-greetings
-        run: pm2 start app.py --name greetings-app-dev --interpreter venv\Scripts\python.exe -- --port 7001
+        run: pm2 start app.py --name greetings-app-dev --interpreter "%CD%\venv\Scripts\python.exe" -- --port 7001
 
       - name: Show PM2 list
         shell: cmd
@@ -117,7 +117,7 @@ jobs:
       - name: Start application with PM2
         shell: cmd
         working-directory: python-greetings
-        run: pm2 start app.py --name greetings-app-stg --interpreter venv\Scripts\python.exe -- --port 7002
+        run: pm2 start app.py --name greetings-app-stg --interpreter "%CD%\venv\Scripts\python.exe" -- --port 7002
 
       - name: Show PM2 list
         shell: cmd
@@ -177,7 +177,7 @@ jobs:
       - name: Start application with PM2
         shell: cmd
         working-directory: python-greetings
-        run: pm2 start app.py --name greetings-app-preprod --interpreter venv\Scripts\python.exe -- --port 7003
+        run: pm2 start app.py --name greetings-app-preprod --interpreter "%CD%\venv\Scripts\python.exe" -- --port 7003
 
       - name: Show PM2 list
         shell: cmd
@@ -237,7 +237,7 @@ jobs:
       - name: Start application with PM2
         shell: cmd
         working-directory: python-greetings
-        run: pm2 start app.py --name greetings-app-prod --interpreter venv\Scripts\python.exe -- --port 7004
+        run: pm2 start app.py --name greetings-app-prod --interpreter "%CD%\venv\Scripts\python.exe" -- --port 7004
 
       - name: Show PM2 list
         shell: cmd
