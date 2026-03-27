@@ -54,7 +54,7 @@ jobs:
 
       - name: Wait for app to start
         shell: cmd
-        run: timeout /t 5
+        run: ping 127.0.0.1 -n 6 > nul
 
       - name: Show PM2 list
         shell: cmd
@@ -111,7 +111,7 @@ jobs:
 
       - name: Wait for app to start
         shell: cmd
-        run: timeout /t 5
+        run: ping 127.0.0.1 -n 6 > nul
 
       - name: Show PM2 list
         shell: cmd
@@ -168,7 +168,7 @@ jobs:
 
       - name: Wait for app to start
         shell: cmd
-        run: timeout /t 5
+        run: ping 127.0.0.1 -n 6 > nul
 
       - name: Show PM2 list
         shell: cmd
@@ -225,7 +225,7 @@ jobs:
 
       - name: Wait for app to start
         shell: cmd
-        run: timeout /t 5
+        run: ping 127.0.0.1 -n 6 > nul
 
       - name: Show PM2 list
         shell: cmd
