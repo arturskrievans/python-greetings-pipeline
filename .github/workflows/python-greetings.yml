@@ -10,8 +10,21 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Install pip dependencies
-        uses: ./.github/actions/install-pip-deps
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v4
+        with:
+          repository: mtararujs/python-greetings
+          path: python-greetings
+
+      - name: Create virtual environment
+        shell: cmd
+        working-directory: python-greetings
+        run: python -m venv venv
+
+      - name: Install Python dependencies
+        shell: cmd
+        working-directory: python-greetings
+        run: venv\Scripts\python.exe -m pip install -r requirements.txt
 
   deploy-to-dev:
     runs-on: self-hosted
@@ -20,11 +33,35 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Deploy to dev
-        uses: ./.github/actions/deploy
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v4
         with:
-          environment: dev
-          port: 7001
+          repository: mtararujs/python-greetings
+          path: python-greetings
+
+      - name: Create virtual environment
+        shell: cmd
+        working-directory: python-greetings
+        run: python -m venv venv
+
+      - name: Install Python dependencies
+        shell: cmd
+        working-directory: python-greetings
+        run: venv\Scripts\python.exe -m pip install -r requirements.txt
+
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 delete greetings-app-dev & set "errorlevel=0"
+
+      - name: Start application with PM2
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 start app.py --name greetings-app-dev --interpreter venv\Scripts\python.exe -- --port 7001
+
+      - name: Show PM2 list
+        shell: cmd
+        run: pm2 list
 
   tests-on-dev:
     runs-on: self-hosted
@@ -33,10 +70,21 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Run tests on dev
-        uses: ./.github/actions/test
+      - name: Clone API test repository
+        uses: actions/checkout@v4
         with:
-          environment: dev
+          repository: mtararujs/course-js-api-framework
+          path: course-js-api-framework
+
+      - name: Install Node dependencies
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm install
+
+      - name: Run greetings tests on dev
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm run greetings greetings_dev
 
   deploy-to-stg:
     runs-on: self-hosted
@@ -45,11 +93,35 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Deploy to stg
-        uses: ./.github/actions/deploy
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v4
         with:
-          environment: stg
-          port: 7002
+          repository: mtararujs/python-greetings
+          path: python-greetings
+
+      - name: Create virtual environment
+        shell: cmd
+        working-directory: python-greetings
+        run: python -m venv venv
+
+      - name: Install Python dependencies
+        shell: cmd
+        working-directory: python-greetings
+        run: venv\Scripts\python.exe -m pip install -r requirements.txt
+
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 delete greetings-app-stg & set "errorlevel=0"
+
+      - name: Start application with PM2
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 start app.py --name greetings-app-stg --interpreter venv\Scripts\python.exe -- --port 7002
+
+      - name: Show PM2 list
+        shell: cmd
+        run: pm2 list
 
   tests-on-stg:
     runs-on: self-hosted
@@ -58,10 +130,21 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Run tests on stg
-        uses: ./.github/actions/test
+      - name: Clone API test repository
+        uses: actions/checkout@v4
         with:
-          environment: stg
+          repository: mtararujs/course-js-api-framework
+          path: course-js-api-framework
+
+      - name: Install Node dependencies
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm install
+
+      - name: Run greetings tests on stg
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm run greetings greetings_stg
 
   deploy-to-preprod:
     runs-on: self-hosted
@@ -70,11 +153,35 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Deploy to preprod
-        uses: ./.github/actions/deploy
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v4
         with:
-          environment: preprod
-          port: 7003
+          repository: mtararujs/python-greetings
+          path: python-greetings
+
+      - name: Create virtual environment
+        shell: cmd
+        working-directory: python-greetings
+        run: python -m venv venv
+
+      - name: Install Python dependencies
+        shell: cmd
+        working-directory: python-greetings
+        run: venv\Scripts\python.exe -m pip install -r requirements.txt
+
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 delete greetings-app-preprod & set "errorlevel=0"
+
+      - name: Start application with PM2
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 start app.py --name greetings-app-preprod --interpreter venv\Scripts\python.exe -- --port 7003
+
+      - name: Show PM2 list
+        shell: cmd
+        run: pm2 list
 
   tests-on-preprod:
     runs-on: self-hosted
@@ -83,10 +190,21 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Run tests on preprod
-        uses: ./.github/actions/test
+      - name: Clone API test repository
+        uses: actions/checkout@v4
         with:
-          environment: preprod
+          repository: mtararujs/course-js-api-framework
+          path: course-js-api-framework
+
+      - name: Install Node dependencies
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm install
+
+      - name: Run greetings tests on preprod
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm run greetings greetings_preprod
 
   deploy-to-prod:
     runs-on: self-hosted
@@ -95,11 +213,35 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Deploy to prod
-        uses: ./.github/actions/deploy
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v4
         with:
-          environment: prod
-          port: 7004
+          repository: mtararujs/python-greetings
+          path: python-greetings
+
+      - name: Create virtual environment
+        shell: cmd
+        working-directory: python-greetings
+        run: python -m venv venv
+
+      - name: Install Python dependencies
+        shell: cmd
+        working-directory: python-greetings
+        run: venv\Scripts\python.exe -m pip install -r requirements.txt
+
+      - name: Stop old PM2 process if it exists
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 delete greetings-app-prod & set "errorlevel=0"
+
+      - name: Start application with PM2
+        shell: cmd
+        working-directory: python-greetings
+        run: pm2 start app.py --name greetings-app-prod --interpreter venv\Scripts\python.exe -- --port 7004
+
+      - name: Show PM2 list
+        shell: cmd
+        run: pm2 list
 
   tests-on-prod:
     runs-on: self-hosted
@@ -108,7 +250,18 @@ jobs:
       - name: Checkout pipeline repository
         uses: actions/checkout@v4
 
-      - name: Run tests on prod
-        uses: ./.github/actions/test
+      - name: Clone API test repository
+        uses: actions/checkout@v4
         with:
-          environment: prod
+          repository: mtararujs/course-js-api-framework
+          path: course-js-api-framework
+
+      - name: Install Node dependencies
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm install
+
+      - name: Run greetings tests on prod
+        shell: cmd
+        working-directory: course-js-api-framework
+        run: npm run greetings greetings_prod
