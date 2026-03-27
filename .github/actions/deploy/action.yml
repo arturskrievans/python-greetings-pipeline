@@ -34,7 +34,8 @@ runs:
 
     - name: Delete old PM2 process if it exists
       shell: cmd
-      run: pm2 delete greetings-app-${{ inputs.environment }} 2>nul || echo Process not found
+      continue-on-error: true
+      run: pm2 delete greetings-app-${{ inputs.environment }}
 
     - name: Start application with PM2
       shell: cmd
